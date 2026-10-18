@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var APPS_SCRIPT_URL = 'ВСТАВЬТЕ_URL_ВЕБ_ПРИЛОЖЕНИЯ_APPS_SCRIPT';
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFaohSQcvhOWcMy-dHCGlq1KTVwqlrXF9J4LGSiki1UMKa-qp59TsczN7ZCyi1FiPp/exec';
 
   var header = document.getElementById('header');
   var burger = document.getElementById('burger');
