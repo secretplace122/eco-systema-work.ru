@@ -7,10 +7,15 @@
   var burger = document.getElementById('burger');
   var nav = document.getElementById('nav');
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isMobile = window.matchMedia('(max-width: 860px)').matches;
 
   var revealItems = document.querySelectorAll('[data-reveal]');
 
   if ('IntersectionObserver' in window && !reduceMotion) {
+    var revealOptions = isMobile
+      ? { threshold: 0.01, rootMargin: '0px 0px 15% 0px' }
+      : { threshold: 0.12, rootMargin: '0px 0px -60px 0px' };
+
     var observer = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
@@ -18,10 +23,7 @@
           observer.unobserve(entry.target);
         }
       });
-    }, {
-      threshold: 0.12,
-      rootMargin: '0px 0px -60px 0px'
-    });
+    }, revealOptions);
 
     revealItems.forEach(function (el) { observer.observe(el); });
   } else {
@@ -89,8 +91,29 @@
     });
   }
 
+  function bindCounter(fieldId) {
+    var el = document.getElementById(fieldId);
+    var counter = document.querySelector('[data-counter-for="' + fieldId + '"]');
+    if (!el || !counter) return;
+
+    var max = parseInt(el.getAttribute('maxlength'), 10) || 0;
+    if (!max) return;
+
+    function update() {
+      var len = el.value.length;
+      counter.textContent = len + '/' + max;
+      counter.classList.toggle('is-limit', len >= max);
+      counter.classList.toggle('is-near-limit', len >= max * 0.9 && len < max);
+    }
+
+    el.addEventListener('input', update);
+    update();
+  }
+
+  bindCounter('name');
+  bindCounter('message');
+
   var form = document.getElementById('applyForm');
-  var formSuccess = document.getElementById('formSuccess');
   var successModal = document.getElementById('successModal');
 
   function openSuccessModal() {
@@ -191,8 +214,7 @@
         body: JSON.stringify(payload)
       })
         .then(function () {
-          form.hidden = true;
-          if (formSuccess) formSuccess.hidden = false;
+          submitBtn.textContent = 'Отправлено';
           openSuccessModal();
         })
         .catch(function () {
@@ -243,6 +265,36 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && !privacyModal.hidden) closePrivacy();
     });
+  }
+
+  var heroActions = document.querySelector('.hero__actions');
+  var applySection = document.getElementById('apply');
+  var floatingActions = document.getElementById('floatingActions');
+
+  if (heroActions && floatingActions && 'IntersectionObserver' in window) {
+    var floatState = { heroVisible: true, applyVisible: false };
+
+    function updateFloating() {
+      var show = !floatState.heroVisible && !floatState.applyVisible;
+      floatingActions.classList.toggle('is-visible', show);
+      floatingActions.setAttribute('aria-hidden', show ? 'false' : 'true');
+    }
+
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        floatState.heroVisible = entry.isIntersecting;
+        updateFloating();
+      });
+    }, { threshold: 0 }).observe(heroActions);
+
+    if (applySection) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          floatState.applyVisible = entry.isIntersecting;
+          updateFloating();
+        });
+      }, { threshold: 0 }).observe(applySection);
+    }
   }
 
   var yearEl = document.getElementById('year');
