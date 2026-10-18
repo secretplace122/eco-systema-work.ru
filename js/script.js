@@ -9,6 +9,20 @@
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var isMobile = window.matchMedia('(max-width: 860px)').matches;
 
+  document.querySelectorAll('.logo__text').forEach(function (el) {
+    var text = el.textContent;
+    el.textContent = '';
+    el.setAttribute('aria-label', text);
+
+    Array.prototype.forEach.call(text, function (ch, i) {
+      var span = document.createElement('span');
+      span.textContent = ch === ' ' ? '\u00A0' : ch;
+      span.style.setProperty('--i', i);
+      span.setAttribute('aria-hidden', 'true');
+      el.appendChild(span);
+    });
+  });
+
   var revealItems = document.querySelectorAll('[data-reveal]');
 
   if ('IntersectionObserver' in window && !reduceMotion) {
@@ -209,11 +223,18 @@
 
       fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors',
-        redirect: 'follow',
         body: JSON.stringify(payload)
       })
-        .then(function () {
+        .then(function (response) {
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+          return response.text();
+        })
+        .then(function (text) {
+          var json = null;
+          try { json = JSON.parse(text); } catch (err) { json = null; }
+          if (!json || json.success !== true) {
+            throw new Error((json && json.error) || 'Server error');
+          }
           submitBtn.textContent = 'Отправлено';
           openSuccessModal();
         })
