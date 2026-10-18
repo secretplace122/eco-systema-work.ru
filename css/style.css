@@ -101,15 +101,40 @@ h1, h2, h3, h4, p { margin: 0; }
 
 .eyebrow--light { color: var(--blue-200); }
 
-.inline-link {
-  color: var(--blue-600);
+.inline-link-frame {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 11px 18px;
+  border-radius: 12px;
+  border: 1.5px solid var(--blue-200);
+  background: #fff;
+  color: var(--blue-700);
+  font-size: .9rem;
   font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  transition: color .2s var(--ease);
+  line-height: 1;
+  transition: border-color .2s var(--ease), background-color .2s var(--ease),
+              transform .2s var(--ease), box-shadow .2s var(--ease);
 }
 
-.inline-link:hover { color: var(--blue-800); }
+.inline-link-frame:hover {
+  border-color: var(--blue-500);
+  background: var(--blue-50);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.inline-link-frame svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  transition: transform .2s var(--ease);
+}
+
+.inline-link-frame:hover svg {
+  transform: translate(2px, -2px);
+}
 
 .btn {
   display: inline-flex;
@@ -215,6 +240,7 @@ h1, h2, h3, h4, p { margin: 0; }
   background: rgba(255, 255, 255, .88);
   backdrop-filter: saturate(180%) blur(14px);
   -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-radius: 0 0 14px 14px;
   border-bottom: 1px solid transparent;
   transition: border-color .3s var(--ease), box-shadow .3s var(--ease);
 }
@@ -376,11 +402,13 @@ h1, h2, h3, h4, p { margin: 0; }
 
 .hero__title {
   margin-top: 22px;
-  font-size: clamp(2.2rem, 5.2vw, 3.5rem);
+  font-size: clamp(2rem, 4.8vw, 3.3rem);
   font-weight: 800;
   line-height: 1.06;
   letter-spacing: -.035em;
   color: var(--blue-900);
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .hero__title-company {
@@ -390,6 +418,7 @@ h1, h2, h3, h4, p { margin: 0; }
   font-weight: 700;
   letter-spacing: 0;
   color: var(--blue-600);
+  white-space: normal;
 }
 
 .hero__sub {
@@ -1317,8 +1346,9 @@ h1, h2, h3, h4, p { margin: 0; }
   .hero__title {
     grid-area: title;
     margin-top: 0;
-    font-size: clamp(1.5rem, 6vw, 2rem);
-    line-height: 1.1;
+    font-size: clamp(.9rem, 5vw, 2rem);
+    line-height: 1.15;
+    min-width: 0;
   }
 
   .hero__title-company {
@@ -1409,6 +1439,8 @@ h1, h2, h3, h4, p { margin: 0; }
 
   .field__head { gap: 6px; }
   .field__counter { font-size: .72rem; }
+
+  .hero__meta li { font-size: .74rem; padding: 6px 10px; }
 }
 
 @media (max-width: 400px) {

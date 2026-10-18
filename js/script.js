@@ -44,12 +44,7 @@
     revealItems.forEach(function (el) { el.classList.add('is-visible'); });
   }
 
-  function onScroll() {
-    if (!header) return;
-    header.classList.toggle('is-scrolled', window.scrollY > 8);
-  }
-  onScroll();
-  window.addEventListener('scroll', onScroll, { passive: true });
+  var menuScrollY = 0;
 
   function closeMenu() {
     if (!nav || !burger) return;
@@ -59,8 +54,24 @@
     burger.setAttribute('aria-label', 'Открыть меню');
   }
 
+  function onScroll() {
+    var y = window.scrollY;
+    if (header) {
+      header.classList.toggle('is-scrolled', y > 8);
+    }
+    if (nav && nav.classList.contains('is-open') && Math.abs(y - menuScrollY) > 15) {
+      closeMenu();
+    }
+  }
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
   if (burger && nav) {
     burger.addEventListener('click', function () {
+      var wasOpen = nav.classList.contains('is-open');
+      if (!wasOpen) {
+        menuScrollY = window.scrollY;
+      }
       var isOpen = nav.classList.toggle('is-open');
       burger.classList.toggle('is-active', isOpen);
       burger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
